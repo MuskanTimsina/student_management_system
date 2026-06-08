@@ -1,6 +1,7 @@
 # apirouter is a tool used to organize api endpoint into separate files.
 from fastapi import APIRouter
 from schemas.student import StudentCreate
+from schemas.student import UpdateStudent
 from fastapi import HTTPException,status
 from service import student_service
 
@@ -38,9 +39,9 @@ def get_one_student(student_id:int):
    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                        detail="student not found")   
 @router.put("/students/{student_id}")
-def update_student(student_id:int,name:str,age:int,faculty:str):
+def update_student(student_id:int,student:UpdateStudent):
    try:
-     updated_student=student_service.update_student_service(student_id,name,age,faculty)
+     updated_student=student_service.update_student_service(student_id,student)
    except Exception:
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         detail="something went wrong")

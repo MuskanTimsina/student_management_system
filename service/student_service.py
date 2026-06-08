@@ -32,3 +32,16 @@ def delete_student_service(student_id):
     db.commit()
     db.close()
     return student
+def update_Student_service(student_id:int,student_data):
+    db=sessionlocal()
+    student=db.query(Student).filter(Student.id==student_id).first()
+    if student is None:
+        db.close()
+        return None
+    student.name=student_data.name
+    student.age=student_data.age
+    student.faculty=student_data.faculty
+    db.commit()
+    db.refresh(student)
+    db.close()
+    return student
