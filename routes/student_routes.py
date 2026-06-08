@@ -2,16 +2,15 @@
 from fastapi import APIRouter
 from schemas.student import studentcreate
 from schemas.student import updatestudent
-from Database import  get_connection
 from fastapi import HTTPException,status
 from service import student_service
 
 router=APIRouter()
 
 @router.post("/students")
-def create_student(student:studentcreate):
+def create_student(name:str,age:int,faculty:str):
    try:
-    new_student=student_service.create_student_service(student)
+    new_student=student_service.create_student_service(name,age,faculty)
     return{"message":".....STUDENT MANAGEMENT SYSTEM.....",
              "new_student":new_student}
    except Exception:
@@ -22,28 +21,27 @@ def create_student(student:studentcreate):
 def get_all_students():
    try:
       students=student_service.get_all_students_service()
-      return{"message":".....STUDENT MANAGEMENT SYSTEM.....","students":students}
+      return{"message":".....STUDENT MANAGEMENT SYSTEM.....",
+          "student":students}
    except Exception:
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                          detail="something went wrong")
+                       detail="Something went wrong !")
    
 @router.get("/students/{student_id}")
 def get_one_student(student_id:int):
    try:
-      student=student_service.get_one_student_service(student_id)
+      student=student_service.get_student_by_id_service(student_id)
    except Exception:
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                          detail="something went wrong")
+                          detail="something went wrong !")
    if student:
-      return{"messsage":".....STUDENT MANAGEMTN SYSTEM.....",
-             "student":student}
+      return{"message":".....STUDENT MANAGEMENT SYSTEM.....","student":student}
    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                       detail=f"student not found with id={student_id}")   
-
+                       detail="student not found")   
 @router.put("/students/{student_id}")
-def update_student(student_id:int,student:updatestudent):
+def update_student(student_id:int,name:str,age:int,faculty:str):
    try:
-     updated_student=student_service.update_student_service(student_id,student)
+     updated_student=student_service.update_student_service(student_id,name,age,faculty)
    except Exception:
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         detail="something went wrong")
@@ -56,7 +54,7 @@ def update_student(student_id:int,student:updatestudent):
 @router.delete("/students/{student_id}")
 def delete_student(student_id:int):
    try:
-      deleted_student=student_service.delete_student_service()
+      deleted_student=student_service.delete_student_service(student_id)
    except Exception:
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                           detail="something went wrong")

@@ -1,43 +1,34 @@
-from Database import get_connection
-from fastapi import HTTPException,status
-
+from Database import sessionlocal
+from model.student import Student
 def get_all_students_service():
-    
-        conn,cursor=get_connection()
-        cursor.execute("SELECT * FROM students")
-        students=cursor.fetchone()
-        conn.close()
-        return students
-
-def get_one_student_service(student_id):
-        conn,cursor=get_connection()
-        cursor.execute("SELECT * FROM students WHERE id=%s",(student_id,))
-        student=cursor.fetchone()
-        conn.close()
-        return student
-
-def create_student_service(student):
-        conn,cursor=get_connection()
-        cursor.execute("INSERT INTO students(id,name,age,faculty) VALUES(%s,%s,%s,%s) returning *",
-                       (student.id,student.name,student.age,student.faculty))
-        new_student=cursor.fetchone()
-        conn.commit()
-        conn.close()
-        return new_student
-
-def update_student_service(student_id,student):
-        conn,cursor=get_connection()
-        cursor.execute("UPDATE students SET name=%s,age=%s,faculty=%s WHERE id=%s",
-                       (student.name,student.age,student.faculty,student_id))
-        updated_student=cursor.fetchone()
-        conn.commit()
-        conn.close()
-        return updated_student
+    db=sessionlocal()
+    students=db.query(Student).all
+    db.close()
+    return students
+def get_student_by_id_service(student_id):
+    db=sessionlocal()
+    student=db.query(Student).fileter(Student.id==student_id).first()
+    db.close()
+    return student
+def create_student_service(name,age,faculty):
+    db=sessionlocal()
+    new_student=Student(
+        name=name,
+        age=age,
+        faculty=faculty
+    )
+    db.add(new_student)
+    db.commit()
+    db.refresh(new_student)
+    db.close()
+    return new_student
 def delete_student_service(student_id):
-        conn,cursor=get_connection()
-        cursor.execute("DELETE FROM students where id = %s returning *",(student_id,))
-        deleted_Student=cursor.fetchone()
-        conn.commit()
-        conn.close()
-        return deleted_Student
-
+    db=sessionlocal()
+    student=db.query(Student).filter(Student.id==student_id).first()
+    if student is None:
+        db.close()
+        return None
+    db.delete(student)
+    db.commit()
+    db.close()
+    return student
