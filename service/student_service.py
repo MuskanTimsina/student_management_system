@@ -10,12 +10,12 @@ def get_student_by_id_service(student_id):
     student=db.query(Student).fileter(Student.id==student_id).first()
     db.close()
     return student
-def create_student_service(name,age,faculty):
+def create_student_service(student):
     db=sessionlocal()
     new_student=Student(
-        name=name,
-        age=age,
-        faculty=faculty
+        name=student.name,
+        age=student.age,
+        faculty=student.faculty
     )
     db.add(new_student)
     db.commit()

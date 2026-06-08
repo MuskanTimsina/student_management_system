@@ -1,11 +1,5 @@
 from pydantic import BaseModel
-class studentcreate(BaseModel):
-    id:int
+class StudentCreate(BaseModel):
     name:str
     age:int
     faculty:str
-
-class updatestudent(BaseModel):
-    name:str
-    age:int
-    faculty:str    

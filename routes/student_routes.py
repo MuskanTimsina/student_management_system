@@ -1,16 +1,15 @@
 # apirouter is a tool used to organize api endpoint into separate files.
 from fastapi import APIRouter
-from schemas.student import studentcreate
-from schemas.student import updatestudent
+from schemas.student import StudentCreate
 from fastapi import HTTPException,status
 from service import student_service
 
 router=APIRouter()
 
 @router.post("/students")
-def create_student(name:str,age:int,faculty:str):
+def create_student(student:StudentCreate):
    try:
-    new_student=student_service.create_student_service(name,age,faculty)
+    new_student=student_service.create_student_service(student)
     return{"message":".....STUDENT MANAGEMENT SYSTEM.....",
              "new_student":new_student}
    except Exception:
