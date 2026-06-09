@@ -2,7 +2,7 @@ from Database import sessionlocal
 from model.student import Student
 def get_all_students_service():
     db=sessionlocal()
-    students=db.query(Student).all
+    students=db.query(Student).all()
     db.close()
     return students
 def get_student_by_id_service(student_id):
