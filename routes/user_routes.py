@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi import HTTPException,status
 from service import user_service
-from schemas.user import UserCreate,UserResponse
+from schemas.user import UserCreate,UserResponse,UserLogin
 router=APIRouter()
 @router.post("/signup",response_model=UserResponse)
 def signup(user:UserCreate):
@@ -11,4 +11,15 @@ def signup(user:UserCreate):
     except Exception:
        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                            detail="something went wrong")
+
+@router.post("/login")
+def login(user_data:UserLogin):
+   
+   db_user=user_service.login_user_service(user_data)
+   if db_user is None:
+      raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                          detail="Invalid username or password")
+   return{"message":"Login successful",
+          "id":db_user.id,
+           "user":db_user.username}  
 
