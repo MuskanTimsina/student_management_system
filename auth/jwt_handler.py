@@ -9,3 +9,10 @@ def create_access_token(data:dict):
         algorithm=ALGORITHM
     )
     return token
+def verify_token(token:str):
+    payload=jwt.decode(
+        token,
+        SECRET_KEY,
+        algorithms=[ALGORITHM]
+    )
+    return payload
