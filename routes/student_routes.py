@@ -4,11 +4,13 @@ from schemas.student import StudentCreate,StudentResponse
 from schemas.student import UpdateStudent
 from fastapi import HTTPException,status
 from service import student_service
+from auth import dependencies
+from fastapi import Depends
 
 router=APIRouter()
 
 @router.post("/students",response_model=StudentResponse)
-def create_student(student:StudentCreate):
+def create_student(student:StudentCreate,current_user:dict=Depends(dependencies.get_current_user)):
    try:
     new_student=student_service.create_student_service(student)
     return new_student
@@ -17,7 +19,7 @@ def create_student(student:StudentCreate):
                           detail="something went wrong")
     
 @router.get("/students",response_model=list[StudentResponse])
-def get_all_students():
+def get_all_students(current_user:dict=Depends(dependencies.get_current_user)):
    try:
       students=student_service.get_all_students_service()
       return students
@@ -26,7 +28,7 @@ def get_all_students():
                        detail="Something went wrong !")
    
 @router.get("/students/{student_id}",response_model=StudentResponse)
-def get_one_student(student_id:int):
+def get_one_student(student_id:int,current_user:dict=Depends(dependencies.get_current_user)):
    try:
       student=student_service.get_student_by_id_service(student_id)
    except Exception:
@@ -37,7 +39,7 @@ def get_one_student(student_id:int):
    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                        detail="student not found")   
 @router.put("/students/{student_id}",response_model=StudentResponse)
-def update_student(student_id:int,student:UpdateStudent):
+def update_student(student_id:int,student:UpdateStudent,current_user:dict=Depends(dependencies.get_current_user)):
    try:
      updated_student=student_service.update_Student_service(student_id,student)
    except Exception as e:
@@ -50,7 +52,7 @@ def update_student(student_id:int,student:UpdateStudent):
    
 
 @router.delete("/students/{student_id}")
-def delete_student(student_id: int):
+def delete_student(student_id: int,current_user:dict=Depends(dependencies.get_current_user)):
     try:
         deleted_id = student_service.delete_student_service(student_id)
 
